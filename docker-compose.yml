@@ -2,5 +2,5 @@ version: '3.7'
 services:
   bot:
     build: .
-    command: sh -c "python -m bot"
+    command: python ./bot/main.py
     restart: always
