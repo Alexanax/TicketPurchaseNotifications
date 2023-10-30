@@ -1,25 +1,29 @@
+import asyncio
 import time
-from bs4 import BeautifulSoup
 import requests
-from aiogram.dispatcher import router
+from aiogram import Bot, Dispatcher
+from aiogram.enums import ParseMode
+from aiogram.filters import CommandStart
 from aiogram.types import Message
-from aiogram.filters import Command
+from bs4 import BeautifulSoup
+
 
 date_of_match = '18 Ноября'
 
 TOKEN = "6713595400:AAGmddBYjLskHWg8NX7VmPX9tKif1iNK9As"
+dp = Dispatcher()
 chat_ids = ["435521817", "1292115978"]
 message = f"Появилась возможность купить билет на матч который будет {date_of_match}"
 
 trigger = True
 
 
-@router.message(Command("start"))
-async def start_handler(msg: Message):
+@dp.message(CommandStart())
+async def start_handler(msg: Message) -> None:
     await msg.answer("Привет!")
 
 
-def check_ticket():
+async def check_ticket():
     global trigger
     while trigger:
         try:
@@ -30,7 +34,7 @@ def check_ticket():
                 if card.text.__contains__(date_of_match):
                     if card.parent.parent.parent.find('a', class_='btn sliderCard__head-btn') is not None:
                         print('Найдено событие, отправляю уведомление в телеграмм')
-                        send_notification()
+                        await send_notification()
                         trigger = False
                         break
                     else:
@@ -41,7 +45,7 @@ def check_ticket():
             time.sleep(600)
 
 
-def send_notification():
+async def send_notification():
     while True:
         try:
             for chat_id in chat_ids:
@@ -54,5 +58,11 @@ def send_notification():
             time.sleep(5)
 
 
+async def main() -> None:
+    bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
+    await dp.start_polling(bot)
+
+
 if __name__ == '__main__':
+    asyncio.run(main())
     check_ticket()
