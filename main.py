@@ -1,6 +1,9 @@
 import time
 from bs4 import BeautifulSoup
 import requests
+from aiogram.dispatcher import router
+from aiogram.types import Message
+from aiogram.filters import Command
 
 date_of_match = '18 Ноября'
 
@@ -9,6 +12,11 @@ chat_ids = ["435521817", "1292115978"]
 message = f"Появилась возможность купить билет на матч который будет {date_of_match}"
 
 trigger = True
+
+
+@router.message(Command("start"))
+async def start_handler(msg: Message):
+    await msg.answer("Привет!")
 
 
 def check_ticket():
