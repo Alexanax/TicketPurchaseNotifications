@@ -14,16 +14,17 @@ TOKEN = "6713595400:AAGmddBYjLskHWg8NX7VmPX9tKif1iNK9As"
 dp = Dispatcher()
 chat_ids = ["435521817", "1292115978"]
 message = f"Появилась возможность купить билет на матч который будет {date_of_match}"
+# welcome_message = f"Приветствую!\nВам придет уведомление о возможность купить билеты на матч который будет {date_of_match}"
 
 trigger = True
 
 
-@dp.message(CommandStart())
-async def start_handler(msg: Message) -> None:
-    await msg.answer("Привет!")
+# @dp.message(CommandStart())
+# async def start_handler(msg: Message) -> None:
+#     await msg.answer("Привет!")
 
 
-async def check_ticket():
+def check_ticket():
     global trigger
     while trigger:
         try:
@@ -34,7 +35,7 @@ async def check_ticket():
                 if card.text.__contains__(date_of_match):
                     if card.parent.parent.parent.find('a', class_='btn sliderCard__head-btn') is not None:
                         print('Найдено событие, отправляю уведомление в телеграмм')
-                        await send_notification()
+                        send_notification()
                         trigger = False
                         break
                     else:
@@ -45,7 +46,7 @@ async def check_ticket():
             time.sleep(600)
 
 
-async def send_notification():
+def send_notification():
     while True:
         try:
             for chat_id in chat_ids:
@@ -58,11 +59,11 @@ async def send_notification():
             time.sleep(5)
 
 
-async def main() -> None:
-    bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
-    await dp.start_polling(bot)
+# async def main() -> None:
+#     bot = Bot(TOKEN, parse_mode=ParseMode.HTML)
+#     await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    # asyncio.run(main())
     check_ticket()
